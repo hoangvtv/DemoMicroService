@@ -1,7 +1,7 @@
 package com.phamtanhoang.reviewms.review;
 
 
-import com.phamtanhoang.reviewms.review.dto.ReviewDto;
+import com.phamtanhoang.reviewms.review.dto.ReviewDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,7 @@ public class ReviewController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ReviewDto>> getAllReviews(@RequestParam Long companyId) {
+  public ResponseEntity<List<ReviewDTO>> getAllReviews(@RequestParam Long companyId) {
     return new ResponseEntity<>(reviewService.getAllReview(companyId), HttpStatus.OK);
   }
 
@@ -34,7 +34,7 @@ public class ReviewController {
   }
 
   @GetMapping("/{reviewId}")
-  public ResponseEntity<Review> getReview(@PathVariable("reviewId") Long reviewId) {
+  public ResponseEntity<ReviewDTO> getReview(@PathVariable("reviewId") Long reviewId) {
     return new ResponseEntity<>(reviewService.getReview(reviewId), HttpStatus.OK);
   }
 

@@ -3,8 +3,13 @@ package com.phamtanhoang.jobms.job.impl;
 import com.phamtanhoang.jobms.job.Job;
 import com.phamtanhoang.jobms.job.JobRepository;
 import com.phamtanhoang.jobms.job.JobService;
-import com.phamtanhoang.jobms.job.dto.JobDto;
+import com.phamtanhoang.jobms.job.dto.JobDTO;
 import com.phamtanhoang.jobms.job.external.Company;
+import com.phamtanhoang.jobms.job.external.Review;
+import com.phamtanhoang.jobms.job.mapper.JobMapper;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,10 +35,10 @@ public class JobServiceImpl implements JobService {
 
 
   @Override
-  public List<JobDto> findAll() {
+  public List<JobDTO> findAll() {
     List<Job> jobs = jobRepository.findAll();
 
-    return jobs.stream().map(this::convertToJobDto).collect(Collectors.toList());
+    return jobs.stream().map(this::convertToJobDTO).collect(Collectors.toList());
   }
 
   @Override
@@ -42,8 +47,9 @@ public class JobServiceImpl implements JobService {
   }
 
   @Override
-  public Job getJobById(Long id) {
-    return jobRepository.findById(id).orElse(null);
+  public JobDTO getJobById(Long id) {
+    Job job = jobRepository.findById(id).orElse(null);
+    return convertToJobDTO(job);
   }
 
   @Override
@@ -72,14 +78,21 @@ public class JobServiceImpl implements JobService {
     return false;
   }
 
-  private JobDto convertToJobDto(Job job) {
-    JobDto jobDto = new JobDto();
-    jobDto.setJob(job);
-
+  private JobDTO convertToJobDTO(Job job) {
     Company company = restTemplate.getForObject("http://COMPANY-SERVICE:8081/api/v1/companies/" +
-            job.getCompanyId(),
-        Company.class);
-    jobDto.setCompany(company);
+        job.getCompanyId(), Company.class);
+
+    ResponseEntity<List<Review>> reviewResponse =
+        restTemplate.exchange("http://REVIEW-SERVICE:8083/api/v1/reviews?companyId=" +
+                job.getCompanyId(),
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<Review>>() {
+            });
+
+    List<Review> reviews = reviewResponse.getBody();
+
+    JobDTO jobDto = JobMapper.mapToJobDTO(job, company, reviews);
 
     return jobDto;
   }

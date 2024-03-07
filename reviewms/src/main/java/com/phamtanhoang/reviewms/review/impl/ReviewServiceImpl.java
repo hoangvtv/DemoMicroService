@@ -3,8 +3,9 @@ package com.phamtanhoang.reviewms.review.impl;
 import com.phamtanhoang.reviewms.review.Review;
 import com.phamtanhoang.reviewms.review.ReviewRepository;
 import com.phamtanhoang.reviewms.review.ReviewService;
-import com.phamtanhoang.reviewms.review.dto.ReviewDto;
+import com.phamtanhoang.reviewms.review.dto.ReviewDTO;
 import com.phamtanhoang.reviewms.review.external.Company;
+import com.phamtanhoang.reviewms.review.mapper.ReviewMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -26,8 +27,8 @@ public class ReviewServiceImpl implements ReviewService {
   }
 
   @Override
-  public List<ReviewDto> getAllReview(Long companyId) {
-    List<Review> reviews= reviewRepository.findAll();
+  public List<ReviewDTO> getAllReview(Long companyId) {
+    List<Review> reviews = reviewRepository.findAll();
     return reviews.stream().map(this::convertToReviewDto).collect(Collectors.toList());
   }
 
@@ -43,8 +44,9 @@ public class ReviewServiceImpl implements ReviewService {
   }
 
   @Override
-  public Review getReview(Long reviewId) {
-    return reviewRepository.findById(reviewId).orElse(null);
+  public ReviewDTO getReview(Long reviewId) {
+    Review review = reviewRepository.findById(reviewId).orElse(null);
+    return convertToReviewDto(review);
   }
 
   @Override
@@ -78,14 +80,11 @@ public class ReviewServiceImpl implements ReviewService {
     return false;
   }
 
-  private ReviewDto convertToReviewDto(Review review) {
-    ReviewDto reviewDto= new ReviewDto();
-    reviewDto.setReview(review);
+  private ReviewDTO convertToReviewDto(Review review) {
 
     Company company = restTemplate.getForObject("http://COMPANY-SERVICE:8081/api/v1/companies/" +
-            review.getCompanyId(),
-        Company.class);
-    reviewDto.setCompany(company);
+        review.getCompanyId(), Company.class);
+    ReviewDTO reviewDto = ReviewMapper.mapToReviewDTO(review, company);
 
     return reviewDto;
   }
