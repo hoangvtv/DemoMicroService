@@ -14,7 +14,7 @@ public class ReviewMapper {
     ReviewDTO reviewDto = new ReviewDTO();
     reviewDto.setTitle(review.getTitle());
     reviewDto.setDescription(review.getDescription());
-    reviewDto.setRating(reviewDto.getRating());
+    reviewDto.setRating(review.getRating());
     reviewDto.setCompany(company);
 
     return reviewDto;
