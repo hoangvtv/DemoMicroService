@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="reviewms" />
+        <module name="gate-way" />
         <module name="companyms" />
         <module name="jobms" />
         <module name="ConfigServer" />
@@ -16,6 +17,8 @@
     <bytecodeTargetLevel>
       <module name="companyms" target="17" />
       <module name="ConfigServer" target="17" />
+      <module name="gate-way" target="17" />
+      <module name="gateway" target="17" />
       <module name="jobms" target="17" />
       <module name="reviewms" target="17" />
       <module name="service-registry" target="17" />
@@ -25,6 +28,8 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="ConfigServer" options="-parameters" />
       <module name="companyms" options="-parameters" />
+      <module name="gate-way" options="-parameters" />
+      <module name="gateway" options="-parameters" />
       <module name="jobms" options="-parameters" />
       <module name="reviewms" options="-parameters" />
       <module name="service-registry" options="-parameters" />
