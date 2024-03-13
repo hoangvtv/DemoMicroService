@@ -38,9 +38,6 @@ public class JobServiceImpl implements JobService {
   @Override
   public List<JobDTO> findAll() {
     List<Job> jobs = jobRepository.findAll();
-    for (Job x : jobs) {
-      System.out.println("xxx" + x.getCompanyId());
-    }
 
     return jobs.stream().map(this::convertToJobDTO).collect(Collectors.toList());
   }
@@ -85,7 +82,6 @@ public class JobServiceImpl implements JobService {
   private JobDTO convertToJobDTO(Job job) {
 //    Company company = restTemplate.getForObject("http://COMPANY-SERVICE:8081/api/v1/companies/" +
 //        job.getCompanyId(), Company.class);
-
     Company company = companyClient.getCompany(job.getCompanyId());
 
 //    ResponseEntity<List<Review>> reviewResponse =
