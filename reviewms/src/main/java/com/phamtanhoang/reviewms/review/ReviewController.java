@@ -2,6 +2,7 @@ package com.phamtanhoang.reviewms.review;
 
 
 import com.phamtanhoang.reviewms.review.dto.ReviewDTO;
+import com.phamtanhoang.reviewms.review.messaging.ReviewMessageProducer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,11 @@ import java.util.List;
 public class ReviewController {
 
   private final ReviewService reviewService;
+  private final ReviewMessageProducer reviewMessageProducer;
 
-  public ReviewController(ReviewService reviewService) {
+  public ReviewController(ReviewService reviewService, ReviewMessageProducer reviewMessageProducer) {
     this.reviewService = reviewService;
+    this.reviewMessageProducer = reviewMessageProducer;
   }
 
   @GetMapping
@@ -28,6 +31,7 @@ public class ReviewController {
                                              @RequestBody Review review) {
     boolean isReviewSaved = reviewService.createReview(companyId, review);
     if (isReviewSaved) {
+      reviewMessageProducer.sendMessage(review);
       return new ResponseEntity<>("Review added successfully", HttpStatus.CREATED);
     }
     return new ResponseEntity<>("Company Not Found", HttpStatus.NOT_FOUND);
@@ -59,5 +63,12 @@ public class ReviewController {
     }
     return new ResponseEntity<>("Review not deleted", HttpStatus.NOT_FOUND);
 
+  }
+
+  @GetMapping("/averageRating")
+  public Double getAverageReview(@RequestParam Long companyId) {
+    List<ReviewDTO> reviews = reviewService.getAllReview(companyId);
+
+    return reviews.stream().mapToDouble(ReviewDTO::getRating).average().orElse(0.0);
   }
 }
