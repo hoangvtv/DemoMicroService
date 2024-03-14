@@ -9,9 +9,7 @@ import com.phamtanhoang.jobms.job.dto.JobDTO;
 import com.phamtanhoang.jobms.job.external.Company;
 import com.phamtanhoang.jobms.job.external.Review;
 import com.phamtanhoang.jobms.job.mapper.JobMapper;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
